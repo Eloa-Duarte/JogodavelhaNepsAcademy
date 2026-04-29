@@ -1,4 +1,5 @@
 #include <iostream>
+#include <limits>
 using namespace std;
 
 char tabuleiro[9];
@@ -56,7 +57,7 @@ int main() {
         int turno = 0;
         bool fim = false;
 
-        mostrarTabuleiro(); // mostra tabuleiro inicial
+        mostrarTabuleiro();
 
         while (!fim) {
             int pos;
@@ -64,7 +65,14 @@ int main() {
             int numJogador = (turno % 2 == 0) ? 1 : 2;
 
             cout << "Jogador " << numJogador << " (" << jogador << "), escolha uma posição: ";
-            cin >> pos;
+
+            // validacao
+            while (!(cin >> pos)) {
+                cout << "Posição inválida ou já ocupada! Escolha outra posição.\n";
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "Jogador " << numJogador << " (" << jogador << "), escolha uma posição: ";
+            }
 
             pos--;
 
@@ -73,10 +81,7 @@ int main() {
                 continue;
             }
 
-            // FAZ A JOGADA
             tabuleiro[pos] = jogador;
-
-            // 🔥 MOSTRA IMEDIATAMENTE (correção principal)
             mostrarTabuleiro();
 
             if (verificarVitoria()) {
