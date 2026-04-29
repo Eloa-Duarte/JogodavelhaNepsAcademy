@@ -3,14 +3,12 @@ using namespace std;
 
 char tabuleiro[9];
 
-// Função para inicializar o tabuleiro
 void inicializarTabuleiro() {
     for (int i = 0; i < 9; i++) {
         tabuleiro[i] = '1' + i;
     }
 }
 
-// Função para exibir o tabuleiro
 void mostrarTabuleiro() {
     cout << " " << tabuleiro[0] << " | " << tabuleiro[1] << " | " << tabuleiro[2] << endl;
     cout << "-----------" << endl;
@@ -19,24 +17,22 @@ void mostrarTabuleiro() {
     cout << " " << tabuleiro[6] << " | " << tabuleiro[7] << " | " << tabuleiro[8] << endl;
 }
 
-// Função para verificar vitória
 bool verificarVitoria() {
-    int vitorias[8][3] = {
-        {0,1,2}, {3,4,5}, {6,7,8},
-        {0,3,6}, {1,4,7}, {2,5,8},
-        {0,4,8}, {2,4,6}
+    int v[8][3] = {
+        {0,1,2},{3,4,5},{6,7,8},
+        {0,3,6},{1,4,7},{2,5,8},
+        {0,4,8},{2,4,6}
     };
 
     for (int i = 0; i < 8; i++) {
-        if (tabuleiro[vitorias[i][0]] == tabuleiro[vitorias[i][1]] &&
-            tabuleiro[vitorias[i][1]] == tabuleiro[vitorias[i][2]]) {
+        if (tabuleiro[v[i][0]] == tabuleiro[v[i][1]] &&
+            tabuleiro[v[i][1]] == tabuleiro[v[i][2]]) {
             return true;
         }
     }
     return false;
 }
 
-// Função para verificar empate
 bool verificarEmpate() {
     for (int i = 0; i < 9; i++) {
         if (tabuleiro[i] != 'X' && tabuleiro[i] != 'O') {
@@ -46,11 +42,10 @@ bool verificarEmpate() {
     return true;
 }
 
-// Função para validar jogada
 bool jogadaValida(int pos) {
-    if (pos < 0 || pos > 8) return false;
-    if (tabuleiro[pos] == 'X' || tabuleiro[pos] == 'O') return false;
-    return true;
+    return (pos >= 0 && pos < 9 &&
+           tabuleiro[pos] != 'X' &&
+           tabuleiro[pos] != 'O');
 }
 
 int main() {
@@ -59,36 +54,38 @@ int main() {
     do {
         inicializarTabuleiro();
         int turno = 0;
-        bool jogoAcabou = false;
+        bool fim = false;
 
-        while (!jogoAcabou) {
-            mostrarTabuleiro();
+        mostrarTabuleiro(); // mostra tabuleiro inicial
 
+        while (!fim) {
             int pos;
             char jogador = (turno % 2 == 0) ? 'X' : 'O';
-            int numeroJogador = (turno % 2 == 0) ? 1 : 2;
+            int numJogador = (turno % 2 == 0) ? 1 : 2;
 
-            cout << "Jogador " << numeroJogador << " (" << jogador << "), escolha uma posição: ";
+            cout << "Jogador " << numJogador << " (" << jogador << "), escolha uma posição: ";
             cin >> pos;
 
-            pos--; // ajustar para índice do array
+            pos--;
 
             if (!jogadaValida(pos)) {
                 cout << "Posição inválida ou já ocupada! Escolha outra posição.\n";
                 continue;
             }
 
+            // FAZ A JOGADA
             tabuleiro[pos] = jogador;
 
+            // 🔥 MOSTRA IMEDIATAMENTE (correção principal)
+            mostrarTabuleiro();
+
             if (verificarVitoria()) {
-                mostrarTabuleiro();
-                cout << "Parabéns! Jogador " << numeroJogador << " venceu!\n";
-                jogoAcabou = true;
+                cout << "Parabéns! Jogador " << numJogador << " venceu!\n";
+                fim = true;
             }
             else if (verificarEmpate()) {
-                mostrarTabuleiro();
                 cout << "Empate! Nenhum jogador venceu.\n";
-                jogoAcabou = true;
+                fim = true;
             }
 
             turno++;
@@ -97,7 +94,8 @@ int main() {
         cout << "Deseja reiniciar o jogo? (S/N): ";
         cin >> jogarNovamente;
 
-    } while (jogarNovamente == 'S' || jogarNovamente == 's');
+    } while (jogarNovamente == 'S' || jogarNovamente == 's' ||
+             jogarNovamente == 'Y' || jogarNovamente == 'y');
 
     cout << "Jogo encerrado.\n";
 
